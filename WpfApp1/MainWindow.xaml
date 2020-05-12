@@ -1,0 +1,215 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="Manga Reviewer" Height="700" Width="1200" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" OpacityMask="Black" Loaded="Window_Loaded">
+    <Window.Background>
+        <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+            <GradientStop Color="#FF363030" Offset="0.528"/>
+            <GradientStop Color="#FF191515"/>
+        </LinearGradientBrush>
+    </Window.Background>
+
+    <TabControl x:Name="mainTabCtrl">
+        <TabControl.Background>
+            <ImageBrush/>
+        </TabControl.Background>
+
+        <!-- Upper 1st Tab-->
+        <TabItem Header="Manga" Height="30" Width="100">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Grid gets bounded to an object when selection is made-->
+                <Grid Grid.Column="0" Name="grdSelectedManga">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="337"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Image Grid.Row="0" Source="{Binding SourceImage}" Margin="10,20,10,20"/>
+
+                    <!-- Stackpanel to display data of selected manga -->
+                    <StackPanel Grid.Row="1">
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2" >
+                                <Run Text="Title: " FontWeight="SemiBold"/>
+                                <Run Text="{Binding Path=Title}"/>
+                        </TextBlock>
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2">
+                                <Run Text="Author: " FontWeight="SemiBold"/>
+                                <Run Text="{Binding Path=Author}"/>
+                        </TextBlock>
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2">
+                                <Run Text="Volumes: " FontWeight="SemiBold"/>
+                                <Run Text="{Binding Path=Volumes}"/>
+                        </TextBlock>
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2">
+                            <Run Text="Date Released:" FontWeight="SemiBold"/>
+                            <Run Text="{Binding Path=DateReleased, StringFormat=d-MM-yyyy}"/>
+                        </TextBlock>
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2">
+                                <Run Text="Genre: " FontWeight="SemiBold"/>
+                                <Run Text="{Binding Path=Genre}"/>
+                        </TextBlock>
+                        <TextBlock  FontSize="15" Foreground="White" TextWrapping="Wrap" Margin="10,2">
+                                <Run Text="Rating: " FontWeight="SemiBold"/>
+                                <Run Text="{Binding StringFormat=N1, Path=Rating}"/>
+                        </TextBlock>
+
+                        <Button Name="btnReview" Content="Leave a review" Width="150" Height="25" Margin="10,10" Click="btnReview_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- REviews displayed here in this stackpanel-->
+                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="skPnlReviews">
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Textbox to search and combobox to filter-->
+                <TextBox Name="txtBxSearch" Grid.Column="2" HorizontalAlignment="Left" Height="34" Margin="10,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="159" FontSize="20" TextChanged="TxtBxSearch_TextChanged"/>
+                <ComboBox Name="cmbxGenre" Grid.Column="2" HorizontalAlignment="Left" Height="34" Margin="200,11,0,0" VerticalAlignment="Top" Width="107" SelectionChanged="cmbxGenre_SelectionChanged" FontStretch="UltraCondensed" FontSize="15"/>
+
+                <!-- List of all manga will be displayed here though a data template-->
+                <ListBox x:Name="lbxManga" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="317" Height="563" Margin="0,70,0,0" SelectionChanged="lbxManga_SelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image Grid.Column="0" Source="{Binding Path=SourceImage}" Width="50"></Image>
+
+                                    <Grid Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" FontSize="15" Margin="10,0,0,0" Foreground="#FFCB0E0E" TextWrapping="Wrap" Width="200">
+                                            <Run Text="{Binding Path=Title}"/>
+                                            <LineBreak/>
+                                            <Run Text="{Binding Path=Author}" FontSize="12" Foreground="#FF646161"/>
+                                        </TextBlock>
+
+                                        <TextBlock Grid.Row="1" FontSize="15" Foreground="#FF005BDE" Style="{StaticResource HoverUnderlineStyle}" Margin="10,0,0,0" Loaded="TextBlock_Favourites_Loaded" PreviewMouseLeftButtonDown="TextBlock_Favourites_PreviewMouseLeftButtonDown"/>
+                                    </Grid>
+
+                                </Grid>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </Grid>
+        </TabItem>
+        <!-- Bottom 1st Tab-->
+        
+        
+        <!-- Upper 2nd Tab -->
+        <TabItem Header="Favouites" Height="30" Width="100">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="9*"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <!-- Textbox to search for manga -->
+                <TextBox Name="txtBxFaveSearch" Grid.Row="0" Height="33" Margin="109,20,0,10" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" Width="325" FontSize="18" TextChanged="TxtBxFaveSearch_TextChanged"/>
+
+                <!-- Listbox to display all favourite manga -->
+                <ListBox x:Name="lbxFavourite" Grid.Row="1" Width="970" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="109,34,109,28">
+                    <!-- Itemspanel used to display mangas in a horizontal manner -->
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <!-- Data template with grid to design the layout of manga -->
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding Title}" FontSize="15" Margin="0, 10" Style="{StaticResource HoverUnderlineStyle}" Foreground="#FF005BDE" PreviewMouseLeftButtonDown="txtBlkTitle_PreviewMouseLeftButtonDown"/>
+                                </StackPanel>
+                                
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" BorderThickness="0,0,1,0" Background="GhostWhite" BorderBrush="Silver">
+                                        <TextBlock Text="{Binding Path=Author}" Margin="5" TextWrapping="Wrap"/>
+                                    </Border>
+
+                                    <Border Grid.Column="1" BorderThickness="0,0,1,0" Background="GhostWhite" BorderBrush="Silver">
+                                        <TextBlock Text="{Binding StringFormat=Volumes: {0}, Path=Volumes}" Margin="5" TextWrapping="Wrap"/>
+                                    </Border>
+
+                                    
+                                </Grid>
+
+                                <Grid Grid.Row="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <TextBlock Text="Remove" Foreground="#FF005BDE" FontSize="12" Style="{StaticResource HoverUnderlineStyle}" PreviewMouseLeftButtonDown="TextBlock_Favourites_PreviewMouseLeftButtonDown2"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Combobox to update manga state-->
+                                    <ComboBox Grid.Column="1" Name="cmbxMangaState" SelectedIndex="{Binding Path=ReadingState}" SelectionChanged="cmbxMangaState_SelectionChanged">
+                                        <ComboBoxItem Content="--"/>
+                                        <ComboBoxItem Content="Reading"/>
+                                        <ComboBoxItem Content="Plan to read"/>
+                                        <ComboBoxItem Content="Completed"/>
+                                        <ComboBoxItem Content="On hold"/>
+                                        <ComboBoxItem Content="Dropped"/>
+                                    </ComboBox>
+                                </Grid>
+
+                                <Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="150"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding SourceImage}" Grid.Column="0" Width="150" Height="225" />
+
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Column="1" Width="150" Height="225">
+                                        <TextBlock Text="{Binding Synopsis}"  TextWrapping="Wrap" Margin="5"/>
+                                    </ScrollViewer>
+                                </Grid>
+
+                                <TextBlock Grid.Row="4" Text="{Binding StringFormat=Genre: {0}, Path=Genre}" TextWrapping="Wrap" Width="300" Margin="0, 10,0,0" TextAlignment="Left"></TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </TabItem>
+        <!-- Bottom 2nd Tab -->
+    </TabControl>
+
+</Window>
